@@ -1,0 +1,5 @@
+pytest
+black
+pylint
+pytest-cov # Đo lường độ bao phủ của test
+click
