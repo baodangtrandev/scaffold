@@ -18,7 +18,7 @@ deploy:
 	.venv/bin/pip install --upgrade pip
 	.venv/bin/pip install -r requirements.txt
 	
-	pkill -f "python3 app.py" || true
-	pkill -f "python app.py" || true
+	pkill -f "[p]ython3 app.py" || true
+	pkill -f "[p]ython app.py" || true
 	
 	nohup .venv/bin/python app.py > app.log 2>&1 &
