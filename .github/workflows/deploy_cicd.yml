@@ -1,12 +1,21 @@
-name: CI/CD Pipeline to AWS EC2
+name: CI/CD Pipeline to AWS EC2 (Subfolder CICD)
 
+# Chỉ chạy Pipeline này khi có code thay đổi trong thư mục CICD
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'CICD/**'
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    
+    # Rất quan trọng: Báo cho GitHub biết phải "cd" vào thư mục CICD trước khi chạy lệnh
+    defaults:
+      run:
+        working-directory: ./CICD
+        
     steps:
       - name: Lấy code từ GitHub
         uses: actions/checkout@v4
@@ -37,7 +46,10 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/scaffold/CICD
+            # Bước 1: Mở thư mục gốc của repository trên EC2 và cập nhật code
+            cd /home/ubuntu/scaffold
+            git pull origin main
             
-            # Khởi chạy quy trình deploy
+            # Bước 2: Chui vào thư mục ứng dụng con và gọi lệnh deploy
+            cd CICD
             make deploy
