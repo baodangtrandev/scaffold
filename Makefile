@@ -3,7 +3,7 @@ install:
 	pip install -r requirements.txt
 
 format:
-	black *.py  #Auto format the code
+	black ./CI/*.py  #Auto format the code
 
 lint:
 	pylint --disable=R,C ./CI/hello.py #Check the code quality
