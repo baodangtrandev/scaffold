@@ -1,0 +1,43 @@
+name: CI/CD Pipeline to AWS EC2
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy code từ GitHub
+        uses: actions/checkout@v4
+
+      - name: Cài đặt Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cài đặt thư viện
+        run: make install
+
+      - name: Chạy Linting
+        run: make lint
+
+      - name: Chạy Test tự động
+        run: make test
+
+  deploy-to-ec2:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Đăng nhập EC2 và gọi lệnh Make Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/scaffold/CICD
+            
+            # Khởi chạy quy trình deploy
+            make deploy
